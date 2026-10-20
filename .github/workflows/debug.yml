@@ -1,0 +1,12 @@
+name: debug
+on: workflow_dispatch
+jobs:
+  d:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "gmi_len=${#GMI} bd_len=${#BD} gem_len=${#GEM} prov=$LLM_PROVIDER"
+        env:
+          GMI: ${{ secrets.GMI_API_KEY }}
+          BD: ${{ secrets.BUTTONDOWN_API_KEY }}
+          GEM: ${{ secrets.GEMINI_API_KEY }}
+          LLM_PROVIDER: ${{ secrets.LLM_PROVIDER }}
