@@ -9,6 +9,9 @@ on:
         description: "Optional topic override"
         required: false
 
+permissions:
+  contents: write
+
 jobs:
   run:
     runs-on: ubuntu-latest
