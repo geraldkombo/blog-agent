@@ -8,6 +8,12 @@ Done for you (verified 2026-10-19):
 - [x] Live URLs: buttondown.com/THE254REPORT/archive/free-tier-cloud-platforms-support-side-projects/
       telegra.ph/Free-tier-cloud-platforms-support-side-projects-10-19 | write.as/d2p3oc022rwxn
 
+## DONE SINCE (2026-10-20 session 2)
+- [x] GitHub: token generated via browser automation, repo geraldkombo/blog-agent (public), secrets set, Actions GREEN
+- [x] GitHub Pages LIVE: https://geraldkombo.github.io/blog-agent/
+- [x] Full pipeline verified in Actions: MCP article -> Buttondown + Telegraph + Write.as drafts
+- [x] Cloudflare Worker live with cron: https://blog-agent.shikunyi.workers.dev
+
 ## Needs YOUR accounts (free, ~2 min each)
 
 ### LLM keys (at least one working at all times)
