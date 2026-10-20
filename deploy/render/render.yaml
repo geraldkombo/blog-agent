@@ -1,0 +1,28 @@
+# Render — NOTE: Render free tier does NOT include cron jobs (starter instances are paid).
+# Included for completeness; cheapest real option is GitHub Actions or Deno Deploy.
+# Deploy: create a New + > Blueprint from the repo; set env vars in the dashboard.
+services:
+  - type: cron
+    name: blog-agent
+    runtime: node
+    plan: free
+    schedule: "30 5 * * *"
+    buildCommand: npm install --omit=dev
+    startCommand: node run.js once
+    envVars:
+      - key: LLM_PROVIDER
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: PUBLISHERS
+        sync: false
+      - key: BUTTONDOWN_API_KEY
+        sync: false
+      - key: DEVTO_API_KEY
+        sync: false
+      - key: WORDPRESS_URL
+        sync: false
+      - key: WORDPRESS_USERNAME
+        sync: false
+      - key: WORDPRESS_APP_PASSWORD
+        sync: false

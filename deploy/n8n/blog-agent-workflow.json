@@ -1,0 +1,63 @@
+{
+  "name": "blog-agent-daily",
+  "nodes": [
+    {
+      "id": "schedule",
+      "name": "Daily 05:30 UTC",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "parameters": { "rule": { "interval": [{ "field": "cronExpression", "expression": "30 5 * * *" }] } }
+    },
+    {
+      "id": "topic",
+      "name": "Pick topic",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [200, 0],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "t1", "name": "topic", "value": "={{ ['AI tools for small businesses','Free-tier cloud platforms','Newsletter SEO basics','MCP and AI agents'][(new Date().getDate()) % 4] }}", "type": "string" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "gen",
+      "name": "Generate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [400, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={{ $env.GEMINI_API_KEY }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ contents: [{ parts: [{ text: 'Write a 700-word blog article in Markdown about: ' + $('Pick topic').item.json.topic + '. First line = title as # heading. Be factual and specific.' }] }] }) }}"
+      }
+    },
+    {
+      "id": "publish",
+      "name": "Buttondown draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [600, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.buttondown.com/v1/emails",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Token {{ $env.BUTTONDOWN_API_KEY }}" }] },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ subject: $json.candidates[0].content.parts[0].text.split('\\n')[0].replace('# ',''), body: $json.candidates[0].content.parts[0].text, status: 'draft' }) }}"
+      }
+    }
+  ],
+  "connections": {
+    "Daily 05:30 UTC": { "main": [[{ "node": "Pick topic", "type": "main", "index": 0 }]] },
+    "Pick topic": { "main": [[{ "node": "Generate", "type": "main", "index": 0 }]] },
+    "Generate": { "main": [[{ "node": "Buttondown draft", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

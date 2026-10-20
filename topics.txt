@@ -1,0 +1,10 @@
+# One topic per line. The agent rotates through these by day-of-year.
+# Lines starting with # are ignored.
+AI tools for Kenyan small businesses in 2026
+How newsletter creators make their first $1,000
+Free-tier cloud platforms compared for side projects
+Building an automated content pipeline with open-source tools
+SEO basics for newsletters: titles, slugs and schema
+The rise of MCP: connecting AI agents to real services
+Digital journalism in East Africa: trends and funding
+How to fact-check AI-generated articles before publishing

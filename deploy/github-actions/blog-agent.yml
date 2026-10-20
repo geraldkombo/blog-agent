@@ -1,0 +1,67 @@
+name: blog-agent
+
+on:
+  schedule:
+    - cron: "30 5 * * *" # 05:30 UTC daily (08:30 EAT)
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: "Optional topic override"
+        required: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run pipeline
+        env:
+          LLM_PROVIDER: ${{ secrets.LLM_PROVIDER }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          TOGETHER_API_KEY: ${{ secrets.TOGETHER_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_COMPAT_KEY: ${{ secrets.OPENAI_COMPAT_KEY }}
+          OPENAI_COMPAT_BASE: ${{ secrets.OPENAI_COMPAT_BASE }}
+          OPENAI_COMPAT_MODEL: ${{ secrets.OPENAI_COMPAT_MODEL }}
+          BLOG_TOPIC: ${{ inputs.topic }}
+          PUBLISHERS: ${{ secrets.PUBLISHERS }}
+          PUBLISH_MODE: ${{ secrets.PUBLISH_MODE }}
+          WORDS: "900"
+          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+          BEEHIIV_API_KEY: ${{ secrets.BEEHIIV_API_KEY }}
+          BEEHIIV_PUBLICATION_ID: ${{ secrets.BEEHIIV_PUBLICATION_ID }}
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+          HASHNODE_API_KEY: ${{ secrets.HASHNODE_API_KEY }}
+          HASHNODE_PUBLICATION_ID: ${{ secrets.HASHNODE_PUBLICATION_ID }}
+          GHOST_ADMIN_KEY: ${{ secrets.GHOST_ADMIN_KEY }}
+          GHOST_URL: ${{ secrets.GHOST_URL }}
+          WORDPRESS_URL: ${{ secrets.WORDPRESS_URL }}
+          WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
+          WORDPRESS_APP_PASSWORD: ${{ secrets.WORDPRESS_APP_PASSWORD }}
+          WRITEAS_POST_ID: ${{ secrets.WRITEAS_POST_ID }}
+          WRITEAS_SECRET: ${{ secrets.WRITEAS_SECRET }}
+          BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
+          GOOGLE_OAUTH_TOKEN: ${{ secrets.GOOGLE_OAUTH_TOKEN }}
+          MEDIUM_INTEGRATION_TOKEN: ${{ secrets.MEDIUM_INTEGRATION_TOKEN }}
+          MEDIUM_AUTHOR_ID: ${{ secrets.MEDIUM_AUTHOR_ID }}
+          GITHUB_REPO: ${{ github.repository }}
+          TELEGRAPH_ACCESS_TOKEN: ${{ secrets.TELEGRAPH_ACCESS_TOKEN }}
+        run: node run.js once
+
+      - name: Commit generated posts back to repo
+        if: always()
+        run: |
+          git config user.name "blog-agent"
+          git config user.email "blog-agent@users.noreply.github.com"
+          git add out/ static-site/_posts/ 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "post: $(date -u +%F)" && git push

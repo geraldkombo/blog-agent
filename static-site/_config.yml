@@ -1,0 +1,7 @@
+title: The 254 Report Blog
+description: Auto-generated articles by blog-agent
+theme: minima
+markdown: kramdown
+permalink: /:year/:month/:day/:title/
+plugins:
+  - jekyll-seo-tag
