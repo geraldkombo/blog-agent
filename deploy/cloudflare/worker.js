@@ -3,19 +3,42 @@
 // Secrets: npx wrangler secret put LLM_PROVIDER / GEMINI_API_KEY / BUTTONDOWN_API_KEY / ...
 import { runOnce } from "../../lib/pipeline.js";
 
+// Workers have no topics.txt, so rotate the same list by day-of-year.
+const TOPICS = [
+  "AI tools for Kenyan small businesses in 2026",
+  "How newsletter creators make their first $1,000",
+  "Free-tier cloud platforms compared for side projects",
+  "Building an automated content pipeline with open-source tools",
+  "SEO basics for newsletters: titles, slugs and schema",
+  "The rise of MCP: connecting AI agents to real services",
+  "Digital journalism in East Africa: trends and funding",
+  "How to fact-check AI-generated articles before publishing",
+];
+
+function todaysTopic() {
+  const now = new Date();
+  const start = Date.UTC(now.getUTCFullYear(), 0, 0);
+  const day = Math.floor((now - start) / 86400000);
+  return TOPICS[day % TOPICS.length];
+}
+
+// Replace the bound process object rather than mutating process.env, which may be
+// a read-only getter under nodejs_compat. config.js reads process.env at call time.
+function bindEnv(env) {
+  globalThis.process = { ...(globalThis.process || {}), env };
+  return env;
+}
+
 export default {
   async scheduled(event, env, ctx) {
-    // shim process.env so the shared lib works unchanged
-    globalThis.process = globalThis.process || { env };
-    globalThis.process.env = env;
-    ctx.waitUntil(runOnce({}));
+    bindEnv(env);
+    ctx.waitUntil(runOnce({ topic: todaysTopic() }));
   },
   async fetch(request, env, ctx) {
-    globalThis.process = globalThis.process || { env };
-    globalThis.process.env = env;
+    bindEnv(env);
     const url = new URL(request.url);
     if (url.pathname === "/health") return new Response("ok");
-    const hasKey = url.searchParams.get("key") === env.CRON_SECRET;
+    const hasKey = Boolean(env.CRON_SECRET) && url.searchParams.get("key") === env.CRON_SECRET;
     if (url.pathname === "/" && !hasKey) {
       return new Response(
         `<!doctype html><meta charset="utf-8"><title>blog-agent</title>
@@ -36,11 +59,11 @@ export default {
     }
     if (!hasKey) return new Response("unauthorized — add ?key=YOUR_KEY", { status: 401 });
     const out = await runOnce({
-      topic: url.searchParams.get("topic") || undefined,
+      topic: url.searchParams.get("topic") || todaysTopic(),
       targets: url.searchParams.get("targets") ? url.searchParams.get("targets").split(",") : undefined,
       words: url.searchParams.get("words") ? parseInt(url.searchParams.get("words")) : undefined,
       dryRun: url.searchParams.get("dry") === "1",
     });
-    return Response.json({ title: out.article.title, results: out.results });
+    return Response.json({ title: out.article.title, provider: out.article.provider, results: out.results });
   },
 };
