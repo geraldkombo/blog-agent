@@ -29,7 +29,7 @@ topics.txt / BLOG_TOPIC / --topic
 ```
 
 `*` beehiiv post-creation API is **Pro plan only**. On Free plan use the CDP
-browser method documented in `..\BEEHIIV-ARTICLE-METHOD.md`, or keep beehiiv
+browser method documented in `..\254-Prompts\BEEHIIV-ARTICLE-METHOD.md`, or keep beehiiv
 out of PUBLISHERS.
 
 ## Deploy targets (all free) — see `deploy/`

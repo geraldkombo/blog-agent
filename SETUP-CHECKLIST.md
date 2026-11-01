@@ -31,7 +31,7 @@ Done for you (verified 2026-10-19):
 - [x] **Buttondown** — working (THE254REPORT)
 - [x] **Telegraph / Write.as** — working, zero signup
 - [ ] **beehiiv** — write API is Pro-plan only (403). Options: keep using the CDP
-      browser method (`..\BEEHIIV-ARTICLE-METHOD.md`), or upgrade to Grow ($39+/mo)
+      browser method (`..\254-Prompts\BEEHIIV-ARTICLE-METHOD.md`), or upgrade to Grow ($39+/mo)
 - [ ] **Dev.to** — dev.to/settings/extensions -> API key -> `DEVTO_API_KEY`
 - [ ] **Hashnode** — hashnode.com -> Developer -> API key + publication id
 - [ ] **WordPress** — you already have the 3 WP MCPs; for direct REST set
