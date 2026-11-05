@@ -18,7 +18,7 @@ node run.js once --targets buttondown,telegraph   # generate + publish drafts
 ```
 topics.txt / BLOG_TOPIC / --topic
         |
-   lib/llm.js      gemini | cerebras | groq | openrouter | mistral | together
+   lib/llm.js      gemini | cerebras | groq | openrouter | mistral | together | github | kilo (keyless)
                    github | gmi | openai-compat | ollama   (auto-fallback chain)
         |
    lib/pipeline.js  prompt -> JSON {title, subtitle, slug, tags, body} -> out/
